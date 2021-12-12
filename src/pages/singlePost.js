@@ -115,7 +115,7 @@ const SinglePost = ({ match }) => {
                 <Header as="h2">Comments</Header>
                 {post.comments.map((comment)=><>
                     <Card className='wide' key={comment.text}>
-                        <Card.Content>
+                        <Card.Content className='text-content'>
                             {comment.text}
                         </Card.Content>
                         <Card.Content extra>
