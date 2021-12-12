@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { Link } from 'react-router-dom'
-import { Container, Form, Header, Image, Input, Button, Card } from 'semantic-ui-react'
+import { Segment, Container, Form, Header, Image, Input, Button, Card, Icon } from 'semantic-ui-react'
 
 const SinglePost = ({ match }) => {
 
@@ -8,6 +7,8 @@ const SinglePost = ({ match }) => {
 
     const [post, setPost]=useState({})
     const [commentFormData, setCommentFormData] = useState({username:"",text:""})
+    const [localPosts, setLocalPosts] = useState([])
+    const [hasvoted, sethasVoted] = useState(false);
 
     useEffect(() => {
         const getPost = async () => {
@@ -21,6 +22,16 @@ const SinglePost = ({ match }) => {
         getPost();
     }, []);
 
+    useEffect(() => {
+        let voteArray=JSON.parse(localStorage.getItem("votes"));
+        if (voteArray===null){
+            voteArray=[];
+        }
+        if (voteArray.includes(ID)){
+            sethasVoted(true);
+        }
+    }, []);
+
     const handleCommentChange = (event) => {
         const {name, value } = event.target;
         setCommentFormData({ ...commentFormData, [name]: value })
@@ -32,7 +43,7 @@ const SinglePost = ({ match }) => {
         post.comments.push(commentFormData);
 
         const postComment = async () => {
-            const resp = await fetch(`http://127.0.0.1:8787/api/posts/byId/${ID}/newComment`, {
+            const resp = await fetch(`https://my-worker.lrk83.workers.dev/api/posts/byId/${ID}/newComment`, {
                 method: 'POST',
                 body: JSON.stringify(post)
             })
@@ -42,13 +53,41 @@ const SinglePost = ({ match }) => {
 
         try {
             postComment();
-            window.location.assign(`/singlePost/${ID}`)
-
+            setCommentFormData({username:"",text:""});
         }
         catch (err){
             console.log(err);
         }
         
+    }
+
+    const vote = (event) => {
+        event.preventDefault();
+        let voteArray = JSON.parse(localStorage.getItem("votes"));
+        if (voteArray===null){
+            voteArray=[];
+        }
+        voteArray.push(ID)
+        localStorage.setItem("votes",JSON.stringify(voteArray));
+
+        post.upvotes++
+
+        const upVote = async () => {
+            const resp = await fetch(`https://my-worker.lrk83.workers.dev/api/posts/byId/${ID}/upvote`, {
+                method: 'POST',
+                body: JSON.stringify(post)
+            })
+
+            return resp;
+        }
+
+        try {
+            upVote();
+            sethasVoted(true);
+        }
+        catch (err){
+            console.log(err);
+        }
     }
 
     if (!post.title){
@@ -57,22 +96,36 @@ const SinglePost = ({ match }) => {
 
     return (
         <Container>
-            <Container className="big-container">
+            <Container className="big-container" id="single-container">
                 <Header as="h1">
                     {post.title}
                 </Header>
-                <Header as="h3"> by {post.username}</Header>
+                <Header as="h3" id="single-username"> by {post.username}</Header>
+                <div className='vote-box'>
+                <span className='single-votes'><Icon name='user' />
+                {post.upvotes} upvotes </span>
+                {hasvoted? <Button  disabled>Upvote</Button> : <Button color='blue' onClick={vote}>Upvote</Button> }
+                </div>
                 {post.hasImage && <Image src={post.url}></Image>}
                 <Container>
                     {post.content}
                 </Container>
             </Container>
-            {post.comments && <>
-            <Container>
+            <Container className='comment-section'>
                 <Header as="h2">Comments</Header>
-                <Form onSubmit={handleCommentSubmit}>
-                    <Header as="h3">Add comment</Header>
-                    <Form.Group inline>
+                {post.comments.map((comment)=><>
+                    <Card className='wide'>
+                        <Card.Content>
+                            {comment.text}
+                        </Card.Content>
+                        <Card.Content extra>
+                            <Icon name='user' />
+                            {comment.username}
+                        </Card.Content>
+                    </Card>
+                </>)}
+                <Form onSubmit={handleCommentSubmit} className='comment-form'>
+                    <Header as="h3" className='white'>Add comment</Header>
                     <Form.Field
                     required
                     control={Input}
@@ -90,19 +143,8 @@ const SinglePost = ({ match }) => {
                     placeholder="Comment"
                     />
                     <Button type='submit'>Submit</Button>
-                    </Form.Group>
                 </Form>
-                {post.comments.map((comment)=><>
-                    <Card>
-                        <Card.Header>
-                            {comment.username}
-                        </Card.Header>
-                        <Card.Content>
-                            {comment.text}
-                        </Card.Content>
-                    </Card>
-                </>)}
-            </Container> </> }
+            </Container>
         </Container>
         )
 }

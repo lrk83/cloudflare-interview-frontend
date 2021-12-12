@@ -78,7 +78,7 @@ const NewPost = () => {
                     name="url"
                     placeholder="Image/Gif URL"
                     />
-                    <Card>
+                    <Card className='preview-card'>
                         <Header>Preview</Header>
                         <Image src={postFormData.url} />
                     </Card>

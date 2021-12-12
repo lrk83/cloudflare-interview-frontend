@@ -19,10 +19,13 @@ const Posts = () => {
     }, []);
 
     return (
-        <Container>
+        <Container className='posts-container'>
             <Container className="big-container">
                 <Header as="h1">
                     Posts
+                </Header>
+                <Header as="h3">
+                    Click on a post's title for more info
                 </Header>
             </Container>
             <Container className="post-container">
@@ -34,10 +37,8 @@ const Posts = () => {
                             <Card.Description>{post.content}</Card.Description>
                         </Card.Content>
                         <Card.Content extra>
-                            <a>
                                 <Icon name='user' />
-                                22 Friends
-                                </a>
+                                {post.upvotes} upvotes
                         </Card.Content>
                     </Card>
                     )}

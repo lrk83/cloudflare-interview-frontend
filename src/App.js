@@ -1,7 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { ApolloProvider } from '@apollo/client';
-import ApolloClient from 'apollo-boost';
 
 //Components
 import Navbar from './components/Navbar';
@@ -13,24 +11,9 @@ import Posts from './pages/Posts';
 import newPost from './pages/newPost';
 import SinglePost from './pages/singlePost';
 
-//ApolloClient
-const client = new ApolloClient({
-  request: operation => {
-    const token = localStorage.getItem('id_token');
-
-    operation.setContext({
-      headers: {
-        authorization: token ? `Bearer ${token}` : ''
-      }
-    });
-  },
-  uri: '/graphql'
-});
-
 //App Structure
 function App() {
   return (
-    <ApolloProvider client={client}>
       <Router>
         <main>
           <Navbar />
@@ -44,7 +27,6 @@ function App() {
           <Footer/>
         </main>
       </Router>
-    </ApolloProvider>
   );
 }
 
