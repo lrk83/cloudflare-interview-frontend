@@ -29,7 +29,6 @@ const NewPost = () => {
         if (response.status===200){
             window.location.assign("/posts")
         }
-
     }
 
     return (

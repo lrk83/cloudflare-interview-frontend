@@ -11,7 +11,7 @@ return (
         </Header>
         <div>
         <Button as={Link} to="/posts"> Posts </Button>
-        <Button as={Link} to="/newpost"> New posts </Button>
+        <Button as={Link} to="/newpost"> New Post </Button>
         </div>
     </Container>
     )

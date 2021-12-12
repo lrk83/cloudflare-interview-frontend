@@ -72,3 +72,12 @@
 .wide{
     width: 100%!important
 }
+
+.post-container{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.post-card{
+  width: 100%!important
+}

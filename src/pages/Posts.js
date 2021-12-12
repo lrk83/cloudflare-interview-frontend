@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import { Link } from 'react-router-dom'
-import { Container, Header, Card } from 'semantic-ui-react'
+import { Container, Header, Card, Icon } from 'semantic-ui-react'
 
 const Posts = () => {
 
@@ -27,9 +27,18 @@ const Posts = () => {
             </Container>
             <Container className="post-container">
                 {posts.map((post) =>
-                    <Card key={post.key}>
-                        <Header as="h3" as={Link} to={`/singlePost/${post.key}`}>{post.title}</Header>
-                        <Card.Content>{post.content}</Card.Content>
+                    <Card key={post.key} className='post-card'>
+                        <Card.Content>
+                            <Card.Header as={Link} to={`/singlePost/${post.key}`}>{post.title}</Card.Header>
+                            <Card.Meta>{post.username}</Card.Meta>
+                            <Card.Description>{post.content}</Card.Description>
+                        </Card.Content>
+                        <Card.Content extra>
+                            <a>
+                                <Icon name='user' />
+                                22 Friends
+                                </a>
+                        </Card.Content>
                     </Card>
                     )}
             </Container>
